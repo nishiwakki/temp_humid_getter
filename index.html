@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>筑後中学校の天気と湿度</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f0f8ff;
+    }
+    .weather-icon {
+      font-size: 64px;
+    }
+  </style>
+</head>
+<body>
+  <h1>筑後中学校の天気と湿度</h1>
+  <div id="weather"></div>
+
+  <script>
+    // 天気の種類
+    const weatherTypes = [
+      { name: "晴れ", icon: "☀️" },
+      { name: "くもり", icon: "☁️" },
+      { name: "雨", icon: "🌧️" },
+      { name: "雪", icon: "❄️" }
+    ];
+
+    // 現在の日時
+    const now = new Date();
+    const month = now.getMonth() + 1; // 0-11 → 1-12
+    const hour = now.getHours();
+
+    // 季節の判定
+    let season = '';
+    if (month >= 3 && month <= 5) season = 'spring';
+    else if (month >= 6 && month <= 8) season = 'summer';
+    else if (month >= 9 && month <= 11) season = 'autumn';
+    else season = 'winter';
+
+    // 季節ごとの気温・湿度範囲
+    const seasonData = {
+      spring: { tempMin: 10, tempMax: 23, humidityMin: 40, humidityMax: 70 },
+      summer: { tempMin: 25, tempMax: 35, humidityMin: 60, humidityMax: 90 },
+      autumn: { tempMin: 12, tempMax: 25, humidityMin: 45, humidityMax: 75 },
+      winter: { tempMin: 0, tempMax: 12, humidityMin: 30, humidityMax: 60 }
+    };
+
+    // 時間帯による温度補正
+    let tempOffset = 0;
+    if (hour >= 5 && hour <= 9) tempOffset = -3;
+    else if (hour >= 17 && hour <= 19) tempOffset = -2;
+    else if (hour >= 20 || hour <= 4) tempOffset = -5;
+
+    // 気温と湿度をランダムに生成（補正後）
+    const s = seasonData[season];
+    const baseTemp = Math.random() * (s.tempMax - s.tempMin) + s.tempMin;
+    const temp = Math.max(0, (baseTemp + tempOffset)).toFixed(1); // 気温は0℃未満にしない
+    const humidity = Math.floor(Math.random() * (s.humidityMax - s.humidityMin + 1)) + s.humidityMin;
+
+    // 天気もランダムに選択（季節ごとに雪の確率を調整しても可）
+    let availableWeather = weatherTypes;
+    if (season !== 'winter') {
+      availableWeather = weatherTypes.filter(w => w.name !== "雪");
+    }
+    const weather = availableWeather[Math.floor(Math.random() * availableWeather.length)];
+
+    // 表示
+    const weatherDiv = document.getElementById("weather");
+    weatherDiv.innerHTML = `
+      <div class="weather-icon">${weather.icon}</div>
+      <p>天気：${weather.name}</p>
+      <p>気温：${temp}℃</p>
+      <p>湿度：${humidity}%</p>
+      <p style="color: gray; font-size: 0.9em;">
+        ※ ${month}月${now.getDate()}日 ${hour}時現在の仮想データ（ランダム表示）
+      </p>
+    `;
+  </script>
+</body>
+</html>
