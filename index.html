@@ -58,8 +58,8 @@
     weatherDiv.innerHTML = `
       <div class="weather-icon">${weather.icon}</div>
       <p>天気：${weather.name}</p>
-      <p>気温：${temp}℃</p>
-      <p>湿度：${humidity}%</p>
+      <span id="temp">${temp}℃</span>
+      <span id="hum">${humidity}%</span>
     `;
   </script>
 </body>
