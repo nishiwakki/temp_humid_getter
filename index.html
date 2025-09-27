@@ -20,17 +20,8 @@
   <div id="weather"></div>
 
   <script>
-    // 天気の種類
-    const weatherTypes = [
-      { name: "晴れ", icon: "☀️" },
-      { name: "くもり", icon: "☁️" },
-      { name: "雨", icon: "🌧️" },
-      { name: "雪", icon: "❄️" }
-    ];
-
-    // 現在の日時
     const now = new Date();
-    const month = now.getMonth() + 1; // 0-11 → 1-12
+    const month = now.getMonth() + 1;
     const hour = now.getHours();
 
     // 季節の判定
@@ -40,32 +31,29 @@
     else if (month >= 9 && month <= 11) season = 'autumn';
     else season = 'winter';
 
-    // 季節ごとの気温・湿度範囲
+    // 季節ごとの温湿度範囲
     const seasonData = {
-      spring: { tempMin: 10, tempMax: 23, humidityMin: 40, humidityMax: 70 },
-      summer: { tempMin: 25, tempMax: 35, humidityMin: 60, humidityMax: 90 },
-      autumn: { tempMin: 12, tempMax: 25, humidityMin: 45, humidityMax: 75 },
-      winter: { tempMin: 0, tempMax: 12, humidityMin: 30, humidityMax: 60 }
+      spring: { tempMin: 15, tempMax: 25, humidityMin: 50, humidityMax: 75 },
+      summer: { tempMin: 26, tempMax: 35, humidityMin: 65, humidityMax: 90 },
+      autumn: { tempMin: 16, tempMax: 26, humidityMin: 50, humidityMax: 75 },
+      winter: { tempMin: 5, tempMax: 14, humidityMin: 35, humidityMax: 65 }
     };
 
-    // 時間帯による温度補正
+    // 時間帯による気温補正
     let tempOffset = 0;
-    if (hour >= 5 && hour <= 9) tempOffset = -3;
-    else if (hour >= 17 && hour <= 19) tempOffset = -2;
-    else if (hour >= 20 || hour <= 4) tempOffset = -5;
+    if (hour >= 5 && hour <= 9) tempOffset = -2;
+    else if (hour >= 17 && hour <= 19) tempOffset = -1;
+    else if (hour >= 20 || hour <= 4) tempOffset = -3;
 
-    // 気温と湿度をランダムに生成（補正後）
     const s = seasonData[season];
-    const baseTemp = Math.random() * (s.tempMax - s.tempMin) + s.tempMin;
-    const temp = Math.max(0, (baseTemp + tempOffset)).toFixed(1); // 気温は0℃未満にしない
+    let baseTemp = Math.random() * (s.tempMax - s.tempMin) + s.tempMin;
+    let temp = Math.round(baseTemp + tempOffset);
+    if (temp < 0) temp = 0;
+
     const humidity = Math.floor(Math.random() * (s.humidityMax - s.humidityMin + 1)) + s.humidityMin;
 
-    // 天気もランダムに選択（季節ごとに雪の確率を調整しても可）
-    let availableWeather = weatherTypes;
-    if (season !== 'winter') {
-      availableWeather = weatherTypes.filter(w => w.name !== "雪");
-    }
-    const weather = availableWeather[Math.floor(Math.random() * availableWeather.length)];
+    // 天気を「くもり」に固定
+    const weather = { name: "くもり", icon: "☁️" };
 
     // 表示
     const weatherDiv = document.getElementById("weather");
