@@ -8,7 +8,7 @@
       font-family: sans-serif;
       text-align: center;
       padding: 20px;
-      background-color: #f0f8ff;
+      background-color: #f0f0f0;
     }
     .weather-icon {
       font-size: 64px;
@@ -31,28 +31,26 @@
     else if (month >= 9 && month <= 11) season = 'autumn';
     else season = 'winter';
 
-    // 季節ごとの温湿度範囲
+    // より現実的な気温・湿度設定（中心値 ±幅）
     const seasonData = {
-      spring: { tempMin: 15, tempMax: 25, humidityMin: 50, humidityMax: 75 },
-      summer: { tempMin: 26, tempMax: 35, humidityMin: 65, humidityMax: 90 },
-      autumn: { tempMin: 16, tempMax: 26, humidityMin: 50, humidityMax: 75 },
-      winter: { tempMin: 5, tempMax: 14, humidityMin: 35, humidityMax: 65 }
+      spring: { tempCenter: 20, tempRange: 2, humidityMin: 55, humidityMax: 65 },
+      summer: { tempCenter: 30, tempRange: 2, humidityMin: 70, humidityMax: 85 },
+      autumn: { tempCenter: 22, tempRange: 2, humidityMin: 55, humidityMax: 65 },
+      winter: { tempCenter: 10, tempRange: 2, humidityMin: 40, humidityMax: 55 }
     };
 
-    // 時間帯による気温補正
+    // 時間帯補正（マイルド）
     let tempOffset = 0;
-    if (hour >= 5 && hour <= 9) tempOffset = -2;
+    if (hour >= 5 && hour <= 9) tempOffset = -1;
     else if (hour >= 17 && hour <= 19) tempOffset = -1;
-    else if (hour >= 20 || hour <= 4) tempOffset = -3;
+    else if (hour >= 20 || hour <= 4) tempOffset = -2;
 
     const s = seasonData[season];
-    let baseTemp = Math.random() * (s.tempMax - s.tempMin) + s.tempMin;
-    let temp = Math.round(baseTemp + tempOffset);
-    if (temp < 0) temp = 0;
-
+    const baseTemp = s.tempCenter + (Math.random() * s.tempRange * 2 - s.tempRange);
+    const temp = Math.round(baseTemp + tempOffset);
     const humidity = Math.floor(Math.random() * (s.humidityMax - s.humidityMin + 1)) + s.humidityMin;
 
-    // 天気を「くもり」に固定
+    // 天気をくもりに固定
     const weather = { name: "くもり", icon: "☁️" };
 
     // 表示
